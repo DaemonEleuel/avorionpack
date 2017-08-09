@@ -14,7 +14,7 @@ SSExceptional = 5;
 --Exotic
 SSExotic = 5;
 --Legendary
-SSLegendary = 5;
+SSLegendary = 0;
 
 
 --Turrets
@@ -29,7 +29,7 @@ TExceptional = 5;
 --Exotic
 TExotic = 5;
 --Legendary
-TLegendary = 5;
+TLegendary = 0;
 
 --Should the amount of barrels be considered? True will cause the system to keep them separated, false will merge single/double etc. togheter.
 TBarrelMerge = false;

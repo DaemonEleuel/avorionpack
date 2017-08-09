@@ -1,4 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
+package.path = package.path .. ";configs/?.lua"
 require ("galaxy")
 require ("utility")
 require ("faction")
@@ -6,6 +7,7 @@ require ("productions")
 require ("stringutility")
 require ("goods")
 require ("defaultscripts")
+require ("dockBuildingConfig")
 
 -- Don't remove or alter the following comment, it tells the game the namespace this script lives in. If you remove it, the script will break.
 -- namespace StationFounder
@@ -33,41 +35,6 @@ end
 function StationFounder.getIcon()
     return "data/textures/icons/flying-flag.png"
 end
-
---return array containing all factories
-local Scriptables = {
-                    equipmentDock = {
-                                    name = "Equipment Dock"%_t,
-                                    costs = 50000000 --[[50 mil]],
-                                    scripts = {"data/scripts/entity/merchants/equipmentdock.lua",
-                                               "data/scripts/entity/merchants/turretmerchant.lua",
-                                               "data/scripts/entity/merchants/fightermerchant.lua"}
-                                    },
-                    turretFactory = {
-                                    name = "Turret Factory"%_t, 
-                                    costs = 40000000 --[[40 mil]], 
-                                    scripts = {"data/scripts/entity/merchants/turretfactory.lua" }
-                                    },
-                    researchStation ={
-                                      name = "Research Station"%_t, 
-                                      costs = 50000000 --[[50 mil]], 
-                                      scripts = {"data/scripts/entity/merchants/researchstation.lua"} 
-                                      },
-                    repairDock =    {
-                                    name = "Repair Dock"%_t, 
-                                    costs = 30000000 --[[30 mil]], 
-                                    scripts = {"data/scripts/entity/merchants/repairdock.lua"} 
-                                    },
-					citadel ={
-									name = "Citadel"%_t, 
-                                    costs = 120000000 --[[120 mil]], 
-                                    scripts = {"data/scripts/entity/merchants/equipmentdock.lua",
-                                               "data/scripts/entity/merchants/turretmerchant.lua",
-											   "data/scripts/entity/merchants/repairdock.lua",
-											   "data/scripts/entity/merchants/researchstation.lua",
-                                               "data/scripts/entity/merchants/fightermerchant.lua"}
-									}
-					}
 
 -- this function gets called on creation of the entity the script is attached to, on client and server
 --function initialize()
@@ -408,7 +375,7 @@ function StationFounder.foundSpecial(scriptableIndex)
 
     print(shipVolume)
     --shipvolume is volume that you see ingame/1000
-    if shipVolume < 200 then --if the volume is less than 500k
+    if shipVolume < scriptable.volume then --if the volume is less than 500k
         player:sendChatMessage("Station Founder"%_t, 1, "Your ship needs to have 500,000 or more volume to convert!")
         return
     end        
