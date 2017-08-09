@@ -18,12 +18,12 @@ This is a simple collection of mods for Avorion, merged and adapted for personal
  - Salvaging Turrets - Higher DPS, Longer Range, Thicker Beam, Faster turret rotation, Cost fixed(so that dps doesn't make em too expensive)
  - Turrets & Upgrade merchants sell more items
  - Salvage fighters have longer range
- - Custom Fighters - I've used the commands package with some old code that I got working (in one of my older posts) so that you can make your own custom fighters.
+ - [Custom Fighters](https://www.avorion.net/forum/index.php/topic,3044.msg16336.html#msg16336) - I've used the commands package with some old code that I got working (in one of my older posts) so that you can make your own custom fighters.
 
  - [Avorion Commands Package (/inventory, /crew, /sethome and more)](http://www.avorion.net/forum/index.php/topic,830.0.html) | Aki
- - [Detailed Turret Tooltips](http://www.avorion.net/forum/index.php/topic,1635.0.html) | lyravega]
- - [Extended trading reach](http://www.avorion.net/forum/index.php/topic,1114.0.html) | NexusNull]
- - [All Turret Auto-Targeting](http://www.avorion.net/forum/index.php/topic,1120.0.html) | RebCom1807]
+ - [Detailed Turret Tooltips](http://www.avorion.net/forum/index.php/topic,1635.0.html) | lyravega
+ - [Extended trading reach](http://www.avorion.net/forum/index.php/topic,1114.0.html) | NexusNull
+ - [All Turret Auto-Targeting](http://www.avorion.net/forum/index.php/topic,1120.0.html) | RebCom1807
  - [Hiring Pool Scaling](https://www.avorion.net/forum/index.php/topic,1241.0.html) | bit
  - ["Mining System/Module" Balance Changes](http://www.avorion.net/forum/index.php/topic,845.0.html) | Kane Hart
  - [AI-Ship salvages now all wreckages](http://www.avorion.net/forum/index.php/topic,3220.0.html) | JohnnySinclair
