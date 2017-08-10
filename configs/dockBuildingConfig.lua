@@ -16,7 +16,7 @@ local Scriptables = {
                                     name = "Turret Factory"%_t, 
                                     costs = 40000000 --[[40 mil]], 
 									volume = 200,
-                                    scripts = {"data/scripts/entity/merchants/turretfactory.lua" }
+                                    scripts = {"data/scripts/entity/merchants/turretfactory.lua"}
                                     },
                     researchStation ={
                                       name = "Research Station"%_t, 
@@ -38,12 +38,14 @@ local Scriptables = {
                                     },
 					citadel ={
 									name = "Citadel"%_t, 
-                                    costs = 120000000 --[[120 mil]], 
+                                    costs = 200000000 --[[200 mil]], 
 									volume = 500,
                                     scripts = {"data/scripts/entity/merchants/equipmentdock.lua",
                                                "data/scripts/entity/merchants/turretmerchant.lua",
 											   "data/scripts/entity/merchants/repairdock.lua",
+											   "data/scripts/entity/merchants/turretfactory.lua",
 											   "data/scripts/entity/merchants/researchstation.lua",
-                                               "data/scripts/entity/merchants/fightermerchant.lua"}
+                                               "data/scripts/entity/merchants/fightermerchant.lua",
+											   "data/scripts/entity/merchants/shipyard.lua"}
 									}
 					}
