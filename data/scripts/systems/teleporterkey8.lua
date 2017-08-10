@@ -7,15 +7,13 @@ require ("randomext")
 -- this key is dropped by the smuggler
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 1)
 end
 
 function getHyperRecharge(seed, rarity)
 
     math.randomseed(seed)
-	randomx = getInt(0, 9)
-	number = rarity.value * 8
-	number = number + randomx --40 max 49
+	number = math.random(38, 45) --35 max 38
 	number = number / 100
 	
     return -number
@@ -23,12 +21,9 @@ function getHyperRecharge(seed, rarity)
 end
 
 function getVelocity(seed, rarity)
+	
 	math.randomseed(seed)
-
-	randomx = math.random() * 15
-	roundx = round(randomx)
-	number = rarity.value * 4
-	number = number + roundx  -- 15 max 30
+	number = math.random(18,22)  -- 18 max 22
 	number = number / 100
 
     return number

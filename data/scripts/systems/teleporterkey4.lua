@@ -7,16 +7,12 @@ require ("randomext")
 -- this key is sold by the travelling merchant
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(3, rarity.value - 2)
 end
 
 function getCargoHold(seed, rarity)
 	math.randomseed(seed)
-	
-	randomx = math.random() * 15
-	roundx = round(randomx)
-	number = rarity.value * 7
-	number = number + roundx  -- 35 max 50
+	number = math.random (65, 75)  -- 65 max 75
 	number = number / 100
 	
     return number

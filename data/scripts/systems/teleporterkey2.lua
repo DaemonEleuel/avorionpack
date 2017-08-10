@@ -7,7 +7,7 @@ require ("randomext")
 -- this key is researched at the research station
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 1)
 end
 
 function getRadarReach(seed, rarity)

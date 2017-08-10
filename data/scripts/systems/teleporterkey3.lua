@@ -8,13 +8,7 @@ require ("randomext")
 -- this key is dropped by Boss Swoks
 
 function getNumTurrets(seed, rarity)
-	math.randomseed(seed)
-	
-	if math.random() > 0.01 then
-    return rarity.value + (getInt(1, 2)) + 5
-	else
-	return rarity.value + 9
-	end
+	return rarity.value + 3 -- 8
 end
 
 function onInstalled(seed, rarity)

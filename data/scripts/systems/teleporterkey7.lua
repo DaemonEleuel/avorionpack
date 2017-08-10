@@ -8,15 +8,13 @@ require ("randomext")
 -- this key is dropped by the mad scientist
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 2)
 end
 
 function getEnergyGen(seed, rarity)
     math.randomseed(seed)
-	
-	randomx = getInt(0, 10)
-	number = rarity.value * 14
-	number = number + randomx -- 70 max 80
+
+	number = math.random(70, 80) -- 70 max 80
 	number = number / 100
 
     return number
@@ -25,10 +23,7 @@ end
 function getBattRech(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = math.random() * 10 
-	roundx = round(randomx)
-	number = rarity.value * 8
-	number = number + roundx -- 40 max 50
+	number = math.random(40, 50) -- 40 max 50
 	number = number / 100
 
     return number

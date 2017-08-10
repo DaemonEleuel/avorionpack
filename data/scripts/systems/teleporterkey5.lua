@@ -9,20 +9,16 @@ require ("randomext")
 function getNumTurrets(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = getInt(1, 3)
 	rarityx = rarity.value
-	number = rarityx + randomx -- 6 max 9
+	number = rarityx + 1 -- 6
 	
-    return number + 6
+    return number
 end
 
 function getShieldDurab(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = math.random() * 20
-	roundx = round(randomx)
-	number = rarity.value * 14
-	number = number + roundx  -- 60 max 80
+	number = math.random(60, 80)  -- 60 max 80
 	number = number / 100
 
     return number
