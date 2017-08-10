@@ -71,11 +71,6 @@ function StationFounder.initUI()
     StationFounder.buildGui({7, 8, 9}, buyTab3)
 	--Making the shop UI
     StationFounder.buildSpecialGui(buyTab4)
-    local temp = Scriptables
-    --[[for _, entry in pairs(temp) do
-        print(entry.name)
-        print(entry.price)
-    end]]
     -- warn box
     local size = vec2(550, 230)
     warnWindow = menu:createWindow(Rect(res * 0.5 - size * 0.5, res * 0.5 + size * 0.5))

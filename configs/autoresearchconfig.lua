@@ -1,5 +1,6 @@
 --Autoresearch configuration
 --Allows setting a custom amount of turrets/systems for each rarity level.
+--If set to 0 the item will never be processed
 --Subsystems
 --Petty
 SSPetty = 3;
@@ -31,5 +32,5 @@ TExotic = 5;
 --Legendary
 TLegendary = 0;
 
---Should the amount of barrels be considered? True will cause the system to keep them separated, false will merge single/double etc. togheter.
-TBarrelMerge = false;
+--If true turrets of the same type but with different amount of barrels will be treated as the same.
+TBarrelMerge = true;

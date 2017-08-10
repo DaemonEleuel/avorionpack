@@ -3,21 +3,24 @@ package.path = package.path .. ";data/scripts/entity/?.lua"
 
 require ("utility")
 require ("stringutility")
+require ("faction")
 MONEY_PER_JUMP = 500000         --change to your needs
 CALLDISTANCE = 1000             --10Km is 1.000 not 10.000. Who made this up ?
 
 -- do not touch
 MOD = "[mOS]"
-VERSION = "[0.91] "          
+VERSION = "[0.92] "          
 MSSN = "isMarkedToMove"   --MoveStatuSaveName, gives the movestatus false,nil for not moving. true for needs to be moved
 local window
 local payButton
+local transferToAllianceButton
+local permissions = {AlliancePrivilege.ManageStations, AlliancePrivilege.FoundStations, AlliancePrivilege.ModifyCrafts, AlliancePrivilege.SpendResources}
 
 --is the player that tries to interact also the owner? Are we close enough? then return true.
 function interactionPossible(playerIndex, option)
     local player = Player(playerIndex)
     local this = Entity()
-    if this.factionIndex == player.index then
+    if checkEntityInteractionPermissions(this, permissions) then
         if Entity():getValue(MSSN) == nil then 
             unregisterAsteroid()
         end
@@ -27,7 +30,8 @@ function interactionPossible(playerIndex, option)
 
         local dist = craft:getNearestDistance(this)
 
-        if dist < CALLDISTANCE then                                            
+        if dist < CALLDISTANCE then    
+            prepUI()
             return true
         end
     end
@@ -62,11 +66,35 @@ function initUI()
     local cancelBbutton = window:createButton(Rect(300, 200, 450, 30 + 200 ), " cancel Movement ", "onCancelPressed")
     cancelBbutton.maxTextSize = 15
     
+    
+    transferToAllianceButton = window:createButton(Rect(165, 150, 360, 30 + 150 ), " Transfer to Alliance ", "ontTransferPressed")
+    transferToAllianceButton.maxTextSize = 15
+    
+    if Player().allianceIndex then
+        if Player().index == Entity().factionIndex then
+            transferToAllianceButton.caption = " Transfer to Alliance "
+        elseif Player().allianceIndex == Entity().factionIndex then
+            transferToAllianceButton.caption = " Transfer to You "
+        end
+        transferToAllianceButton.active = true
+        transferToAllianceButton.visible = true
+    else
+        transferToAllianceButton.active = false
+        transferToAllianceButton.visible = false
+    end
+    
     menu:registerWindow(window, "Move Asteroid");
 end
 
 function prepUI()
-    window.visible = false
+    
+    if Player().allianceIndex then
+        transferToAllianceButton.active = true
+        transferToAllianceButton.visible = true
+    else
+        transferToAllianceButton.active = false
+        transferToAllianceButton.visible = false
+    end
     if Entity():getValue(MSSN) == true then
         window.caption = "Configure Movement of " --.. Entity().index.value
         payButton.active = false
@@ -85,7 +113,7 @@ function onCancelPressed(playerIndex)
         invokeServerFunction("onCancelPressed",Player().index)
         print(MOD..VERSION.."Cancel Pressed ")
         unregisterAsteroid()
-        prepUI()
+        window.visible = false
         return
     end
     --reenable the other two options
@@ -100,10 +128,9 @@ end
 
 function onPayPressed()
     if (onClient())then
-        registerAsteroid()
         invokeServerFunction("server_onPayPressed",Player().index)
         print(MOD..VERSION.."Pay Pressed ")
-        prepUI()
+        window.visible = false
         return
     else 
         print(MOD..VERSION.."Pay Pressed on Server")
@@ -113,26 +140,48 @@ end
 
 function server_onPayPressed(playerIndex)
     local player = Player(playerIndex)
-    if player.name ~= Player().name then                --wrong player called
+    local owner = checkEntityInteractionPermissions(Entity(), permissions)
+    if owner then
+        local isMarkedToMove = Entity():getValue(MSSN)
+        local canPay, msg, args = owner:canPay(MONEY_PER_JUMP)
+        
+        if canPay and (isMarkedToMove == false or isMarkedToMove == nil) then
+            owner:payMoney(MONEY_PER_JUMP)      
+            registerAsteroid()
+            print(MOD..VERSION..tostring(owner.name).." payed for Asteroid moving")
+        else
+            player:sendChatMessage("Asteroid", 1, msg,unpack(args))
+            return
+        end
+    else 
         print(MOD..VERSION.."Pay pressed server answer by wrong player:".. Player().name .. " | from: " ..Player(playerIndex).name )
-        return
-    end
-
-    local isMarkedToMove = Entity():getValue(MSSN)
-    local canPay, msg, args = player:canPay(MONEY_PER_JUMP)
-    
-    if canPay and (isMarkedToMove == false or isMarkedToMove == nil) then
-        player:payMoney(MONEY_PER_JUMP)      
-        registerAsteroid()
-        print(MOD..VERSION..tostring(Player(playerIndex).name).." payed for Asteroid moving")
-    else
-        player:sendChatMessage("Asteroid", 1, msg,unpack(args))
         return
     end
 end
 
+function ontTransferPressed()
+    invokeServerFunction("server_ontTransferPressed", Player().index)
+    if Player().index == Entity().factionIndex then
+        transferToAllianceButton.caption = " Transfer to You "
+    elseif Player().allianceIndex == Entity().factionIndex then
+        transferToAllianceButton.caption = " Transfer to Alliance "
+    end
+    window.visible = false
+end
+
+function server_ontTransferPressed(playerIndex)
+    if callingPlayer == playerIndex then
+        if Player(playerIndex).allianceIndex == Entity().factionIndex then
+            print("transferred Asteroid ".. Entity().index.value .. " to Player" ..Player(playerIndex).name)
+            Entity().factionIndex = playerIndex
+        else
+            print("transferred Asteroid ".. Entity().index.value .. " to Alliance" ..Alliance(Player(playerIndex).allianceIndex).name)
+            Entity().factionIndex = Player(playerIndex).allianceIndex
+        end
+    end
+end
+
 function registerAsteroid()
-    Entity():setValue(MSSN,true)
     if onServer() then
         local scripts = Entity():getScripts()   
         local minefounderRunning = false
@@ -151,12 +200,11 @@ function registerAsteroid()
         if sellobjectRunning == true then
             Entity():removeScript("data/scripts/entity/sellobject.lua")
         end 
+        Entity():setValue(MSSN,true)
     end
 end
 
 function unregisterAsteroid()
-
-    Entity():setValue(MSSN,false)
     if onServer() then
         local scripts = Entity():getScripts()   
         local minefounderRunning = false
@@ -175,5 +223,6 @@ function unregisterAsteroid()
         if sellobjectRunning == false then
             Entity():addScript("data/scripts/entity/sellobject.lua")
         end 
+        Entity():setValue(MSSN,false)
     end
 end

@@ -52,34 +52,41 @@ function TurretGenerator.generate(x, y, offset_in, rarity_in, type_in, material_
     --local TurretTemplate T = GenerateTurretTemplate(seed, weaponType, dps, tech, rarity, material)
 	--T.automatic = true
 	--return T
-	    --get the template and mess with reach
+	--get the template and mess with reach
    
     local template = GenerateTurretTemplate(seed, weaponType, dps, tech, rarity, material)
 	
 	if weaponType == WeaponType.SalvagingLaser then
-	template.turningSpeed = template.turningSpeed * 6
-	template.size = template.size * 3
+		template.turningSpeed = template.turningSpeed * 0.2
+		template.size = template.size * 3
+		template.baseEnergyPerSecond = 100
+		template.energyIncreasePerSecond = 100
 	end
     
 	local weapons = {template:getWeapons()}
     template:clearWeapons()
 		for _, weapon in pairs(weapons) do
-			-- if salvager or miner, double blength and adjust reach
+			-- if salvager or miner, double length and adjust reach
 			if weaponType == WeaponType.MiningLaser then
 				weapon.blength = weapon.blength * 4
 				weapon.reach = weapon.blength
-				weapon.bwidth = weapon.bwidth * 10
-				weapon.bshapeSize = weapon.bshapeSize * 10
-			elseif weaponType == WeaponType.SalvagingLaser then  
-				weapon.reach = weapon.isBeam and weapon.blength * 4 or weapon.pvelocity*weapon.pmaximumTime
-				weapon.bwidth = weapon.bwidth * 10
-				weapon.bshapeSize = weapon.bshapeSize * 10
+				weapon.bwidth = weapon.bwidth * 5
+				weapon.bshapeSize = weapon.bshapeSize * 5
+			elseif weaponType == WeaponType.SalvagingLaser then
+				if weapon.isBeam then
+					weapon.reach = weapon.blength * 4
+				elseif weapon.isProjectile then
+					weapon.reach = weapon.pvelocity*weapon.pmaximumTime
+				end
+				weapon.bwidth = weapon.bwidth * 5
+				weapon.bshapeSize = weapon.bshapeSize * 5
 				weapon.blockPenetration = weapon.blockPenetration + 2
 				weapon.damage = weapon.damage * 10
+				weapon.shieldPenetration = 0
+				weapon.shieldDamageMultiplicator = 0
+			end
+		template:addWeapon(weapon)
 		end
-		
-    template:addWeapon(weapon)
-    end
 	
 	
 	template.automatic = true

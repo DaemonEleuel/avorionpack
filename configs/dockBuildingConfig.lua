@@ -3,7 +3,7 @@
 --Costs = Amount the player/alliance will have to pay
 --Volume = Minimum volume for the ship founding the station (volume is volume in-game/1000)
 --Scripts = Configures which options the player will have when interacting with the station
-local Scriptables = {
+Scriptables = {
                     equipmentDock = {
                                     name = "Equipment Dock"%_t,
                                     costs = 50000000 --[[50 mil]],

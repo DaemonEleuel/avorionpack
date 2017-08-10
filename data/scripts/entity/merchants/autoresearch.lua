@@ -248,9 +248,23 @@ function updateInventory()
 		local U=K.rarity.value;
 		local N=S.amount;
 		if T==InventoryItemType.SystemUpgrade and c[U].checked then
-			table.insert(e,K)
+			if (U==-1 and SSPetty > 0) then table.insert(e,K) end
+			if (U==0 and SSCommon > 0) then table.insert(e,K) end
+			if (U==1 and SSUncommon > 0) then table.insert(e,K) end
+			if (U==2 and SSRare > 0) then table.insert(e,K) end
+			if (U==3 and SSExceptional > 0) then table.insert(e,K) end
+			if (U==4 and SSExotic > 0) then table.insert(e,K) end
+			if (U==5 and SSLegendary > 0) then table.insert(e,K) end
 		elseif T==InventoryItemType.Turret or itempType==InventoryItemType.TurretTemplate and d[U].checked then
-			if S.item.stackable then
+			local continue = false
+			if (U==0 and TCommon > 0) then continue=true end
+			if (U==1 and TUncommon > 0) then continue=true end
+			if (U==2 and TRare > 0) then continue=true end
+			if (U==3 and TExceptional > 0) then continue=true end
+			if (U==4 and TExotic > 0) then continue=true end
+			if (U==5 and TLegendary > 0) then continue=true end
+			
+			if (S.item.stackable and continue) then
 				for i=0,S.amount do
 					table.insert(f,K)
 				end
@@ -302,11 +316,11 @@ function getTurretsFromSelection(W,T,Z,_,a0)
 	for A=M,1,-1 do
 		--change it to use single,double,triple and quad turrets of the same type in a single research process
 		if TBarrelMerge then
-			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ and W[A].item.numWeapons==a0 then
+			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ then
 				table.insert(Y,W[A])
 			end
 		else
-			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ then
+			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ and W[A].item.numWeapons==a0 then
 				table.insert(Y,W[A])
 			end
 		end
