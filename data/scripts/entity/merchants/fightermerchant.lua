@@ -50,33 +50,18 @@ end
 
 function SellableFighterItem:getPrice()
     local value = ArmedObjectPrice(self.fighter)
-
     local fighter = self.fighter
-
     -- durability of 100 makes the fighter twice as expensive, 200 three times etc.
-    local hpFactor = fighter.durability / 3000 + 1
+    local hpFactor = fighter.durability / 1000 + 1
     value = value * hpFactor
-
-    -- durability of 100 makes the fighter twice as expensive, 200 three times etc.
-	if fighter.shield >= 0 then
-		local spFactor = fighter.shield / 3000 + 1
-		value = value * spFactor
-	elseif fighter.shield == 0 then
-		value = value * 0.5
-	end																				   
-    -- speed of 60 is median, above makes it more expensive, below makes it cheaper
+    -- speed of 20 is median, above makes it more expensive, below makes it cheaper
     local speedFactor = fighter.maxVelocity / 60
     value = value * speedFactor
-
     -- maneuverability of 2 is median, above makes it more expensive, below makes it cheaper
-    local maneuverFactor = fighter.turningSpeed / 2
+    local maneuverFactor = fighter.turningSpeed / 4
     value = value * maneuverFactor
-    -- size of 2 is median, above makes it more expensive, below makes it cheaper
-    local sizeFactor = fighter.diameter / 3
-    value = value / sizeFactor
-	
 	-- lets make those fighters waaaaaay cheaper, shall we?
-	value = value / 50																				 
+	value = value / 50									
     value = round(value)
 
     return value
@@ -131,10 +116,6 @@ end
 
 local SellableFighter = setmetatable({new = new}, {__call = function(_, ...) return new(...) end})
 
-
-
-
-
 -- if this function returns false, the script will not be listed in the interaction window on the client,
 -- even though its UI may be registered
 function FighterMerchant.interactionPossible(playerIndex, option)
@@ -161,37 +142,6 @@ local function comp(a, b)
     end
 end
 
-function generateFighter() -- server
-
-    local x, y = Sector():getCoordinates()
-    local seed = 0
-    local dps, tech = Balancing_GetSectorWeaponDPS(x, y)
-    local materialProbabilities = Balancing_GetMaterialProbability(x, y)
-    local material = Material(getValueFromDistribution(materialProbabilities))
-
-    -- these have to be in ascending order (weapon type ascending)
-    local weaponTypes = {}
-    weaponTypes[WeaponType.ChainGun]        = 10
-    weaponTypes[WeaponType.PlasmaGun]       = 6
-    weaponTypes[WeaponType.RocketLauncher]  = 2
-    weaponTypes[WeaponType.RailGun]         = 1
-    weaponTypes[WeaponType.Bolter]          = 8
-
-    local weaponType = getValueFromDistribution(weaponTypes)
-
-    local rarities = {}
-	rarities[RarityType.Legendary] = 0.25
-	rarities[RarityType.Exotic] = 0.75
-    rarities[RarityType.Exceptional] = 1 -- exceptional
-    rarities[RarityType.Rare] = 4 -- rare
-    rarities[RarityType.Uncommon] = 16 -- uncommon
-    rarities[RarityType.Common] = 64 -- common
-
-    local rarity = Rarity(getValueFromDistribution(rarities))
-
-    return GenerateFighterTemplate(seed, weaponType, dps, tech, rarity, material)
-end
-
 function FighterMerchant.shop:addItems()
     local station = Entity()
 
@@ -202,7 +152,7 @@ function FighterMerchant.shop:addItems()
     -- create all fighters
     local allFighters = {}
 
-    for i = 1, 10 do
+    for i = 1, 6 do
         local fighter = FighterGenerator.generate(Sector():getCoordinates())
 
         local pair = {}
@@ -213,6 +163,8 @@ function FighterMerchant.shop:addItems()
             pair.amount = getInt(3, 5)
         elseif fighter.rarity.value == RarityType.Rare then
             pair.amount = getInt(6, 10)
+														   
+									   
         elseif fighter.rarity.value == RarityType.Uncommon then
             pair.amount = getInt(8, 15)
         elseif fighter.rarity.value == RarityType.Common then

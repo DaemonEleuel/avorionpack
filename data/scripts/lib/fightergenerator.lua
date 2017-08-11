@@ -47,7 +47,8 @@ function FighterGenerator.generate(x, y, offset_in, rarity_in, type_in, material
     rarities[0] = 64 -- common
 
     local rarity = rarity_in or Rarity(getValueFromDistribution(rarities))
-
+	
+	--Get the generated template and apply changes
 local template = GenerateFighterTemplate(seed, weaponType, dps, tech, rarity, material)
 	
 	local weapons = {template:getWeapons()}
@@ -63,10 +64,10 @@ local template = GenerateFighterTemplate(seed, weaponType, dps, tech, rarity, ma
 		elseif weaponType == WeaponType.RailGun then  
             weapon.damage = weapon.damage * 5
 		elseif weaponType == WeaponType.SalvagingLaser then  
-				weapon.reach = weapon.isBeam and weapon.blength * 4 or weapon.pvelocity*weapon.pmaximumTime
+				weapon.reach = weapon.isBeam and weapon.blength * 6 or weapon.pvelocity*weapon.pmaximumTime
 				weapon.blockPenetration = weapon.blockPenetration + 6
 		elseif weaponType == WeaponType.MiningLaser then
-				weapon.blength = weapon.blength * 4
+				weapon.blength = weapon.blength * 6
 				weapon.reach = weapon.blength
         end
     template:addWeapon(weapon)
