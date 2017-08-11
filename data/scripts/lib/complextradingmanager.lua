@@ -191,6 +191,7 @@ function synchTradingLists(boughtGoodsIn, soldGoodsIn, intermediateGoodsIn, call
             debugPrint(4,"PlayerList", sectorPlayers)
             --for _,player in pairs(sectorPlayers) do
                 --if player.index == Entity().factionIndex then
+                    --broadcastInvokeClientFunction("synchTradingLists", boughtGoods, soldGoods, intermediateGoods, true)
                     invokeClientFunction(Player(Entity().factionIndex), "synchTradingLists", boughtGoods, soldGoods, intermediateGoods, true)
                 --end
             --end

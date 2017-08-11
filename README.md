@@ -87,18 +87,24 @@ This is a simple collection of mods for Avorion, merged and adapted for personal
  - [x] Merged
  - [x] Tested
  - [x] Available
- - [move Asteroids](http://www.avorion.net/forum/index.php?topic=2685.0) | Laserzwei
+ - [move Asteroids](http://www.avorion.net/forum/index.php?topic=2685.0)
  Allows players to move asteroids before a mine is placed on them, for a price.
  - [x] Merged
  - [x] Tested
  - [x] Available
+ - [out of sector non player Production](http://www.avorion.net/forum/index.php/topic,1322.0.html)
+ Emulates time passed for production facilities even when players are not in the sector
+ - [x] Merged
+ - [ ] Tested
+ - [ ] Available
+ - [CompleX3s CPX3](http://www.avorion.net/forum/index.php?topic=3268.0)
+ - [x] Merged
+ - [ ] Tested
+ - [ ] Available
 
 ## In the works
 
- - [out of sector non player Production](http://www.avorion.net/forum/index.php/topic,1322.0.html) | Laserzwei
- - [CompleX3s CPX3](http://www.avorion.net/forum/index.php?topic=3268.0) | Laserzwei
-
-
+ - Rework AutoResearch. The code is flimsy and could use some ground-up rework.
 
 ## Future plans
  - [MOD FleetControl](https://www.avorion.net/forum/index.php?topic=3359.0) | w00zla

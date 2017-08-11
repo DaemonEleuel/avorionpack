@@ -288,7 +288,7 @@ function synchProductionData(pProductionData, calledOnServer)
     debugPrint(3,"sync of ProductionData", pProductionData)
     if onServer() == true then 
         if calledOnServer == nil then
-            invokeClientFunction(Player(),"synchProductionData", pProductionData, true)
+            broadcastInvokeClientFunction("synchProductionData", pProductionData, true)
         else
             debugPrint(0,"synchProductionData called from Client - This is not allowed!")
             return
