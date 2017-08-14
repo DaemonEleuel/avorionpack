@@ -19,7 +19,8 @@ function getCargoHold(seed, rarity)
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.CargoHold, getCargoHold(seed, rarity))
 	
 end
@@ -46,7 +47,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Cargo Hold", rtext = "+" .. getCargoHold(seed, rarity) * 100 .. "%", icon = "data/textures/icons/wooden-crate.png"}
     }
 end

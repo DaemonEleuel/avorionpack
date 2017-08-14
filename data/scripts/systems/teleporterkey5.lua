@@ -26,7 +26,8 @@ end
 
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.ShieldDurability, getShieldDurab(seed, rarity))
 end
 
@@ -52,7 +53,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Shield Durability", rtext = "+" .. (getShieldDurab(seed, rarity) * 100) .. "%", icon = "data/textures/icons/health-normal.png"}
     }
 end
