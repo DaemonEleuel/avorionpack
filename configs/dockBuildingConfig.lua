@@ -36,16 +36,23 @@ Scriptables = {
 					volume = 200,
                     scripts = {"data/scripts/entity/merchants/shipyard.lua"} 														   
                     },
+	resourcetrader =    {
+                    name = "Resource Trader"%_t, 
+                    costs = 35000000 --[[50 mil]], 
+					volume = 200,
+                    scripts = {"data/scripts/entity/merchants/resourcetrader.lua"} 														   
+                    },
 	citadel ={
 					name = "Citadel"%_t, 
                     costs = 200000000 --[[200 mil]], 
 					volume = 500,
                     scripts = {"data/scripts/entity/merchants/equipmentdock.lua",
                                "data/scripts/entity/merchants/turretmerchant.lua",
+							   "data/scripts/entity/merchants/fightermerchant.lua",
 							   "data/scripts/entity/merchants/repairdock.lua",
 							   "data/scripts/entity/merchants/turretfactory.lua",
 							   "data/scripts/entity/merchants/researchstation.lua",
-                               "data/scripts/entity/merchants/fightermerchant.lua",
+							   "data/scripts/entity/merchants/resourcetrader.lua",
 							   "data/scripts/entity/merchants/shipyard.lua"}
 					}
 }
