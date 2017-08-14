@@ -95,8 +95,8 @@ This is a simple collection of mods for Avorion, merged and adapted for personal
  - [out of sector non player Production](http://www.avorion.net/forum/index.php/topic,1322.0.html)
  Emulates time passed for production facilities even when players are not in the sector
  - [x] Merged
- - [ ] Tested
- - [ ] Available
+ - [x] Tested
+ - [x] Available
  - [CompleX3s CPX3](http://www.avorion.net/forum/index.php?topic=3268.0)
  - [x] Merged
  - [ ] Tested
