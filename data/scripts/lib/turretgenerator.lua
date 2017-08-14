@@ -57,7 +57,7 @@ function TurretGenerator.generate(x, y, offset_in, rarity_in, type_in, material_
     local template = GenerateTurretTemplate(seed, weaponType, dps, tech, rarity, material)
 	
 	if weaponType == WeaponType.SalvagingLaser then
-		template.turningSpeed = template.turningSpeed * 6
+		template.turningSpeed = template.turningSpeed * 2
 	end
     
 	local weapons = {template:getWeapons()}
@@ -65,13 +65,13 @@ function TurretGenerator.generate(x, y, offset_in, rarity_in, type_in, material_
 		for _, weapon in pairs(weapons) do
 			-- if salvager or miner, double blength and adjust reach
 			if weaponType == WeaponType.MiningLaser then
-				weapon.blength = weapon.blength * 4
+				weapon.blength = weapon.blength * 6
 				weapon.reach = weapon.blength
 				weapon.bwidth = weapon.bwidth * 5
 				weapon.bshapeSize = weapon.bshapeSize * 5
-				weapon.stoneDamageMultiplicator = weapon.stoneDamageMultiplicator * 3
+				weapon.stoneDamageMultiplicator = weapon.stoneDamageMultiplicator * 5
 			elseif weaponType == WeaponType.SalvagingLaser then  
-				weapon.reach = weapon.isBeam and weapon.blength * 4 or weapon.pvelocity*weapon.pmaximumTime
+				weapon.reach = weapon.isBeam and weapon.blength * 6 or weapon.pvelocity*weapon.pmaximumTime
 				weapon.bwidth = weapon.bwidth * 5
 				weapon.bshapeSize = weapon.bshapeSize * 5
 				weapon.blockPenetration = weapon.blockPenetration + 2
@@ -79,7 +79,6 @@ function TurretGenerator.generate(x, y, offset_in, rarity_in, type_in, material_
 		end
     template:addWeapon(weapon)
     end
-	
 	
 	template.automatic = true
     return template
