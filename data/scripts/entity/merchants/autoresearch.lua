@@ -2,6 +2,8 @@ package.path = package.path .. ";data/scripts/entity/merchants/?.lua;"
 package.path = package.path .. ";data/scripts/lib/?.lua;"
 package.path = package.path .. ";configs/?.lua;"
 
+require ("autoresearchconfig")
+
 local a={[-1]={"Petty",112,112,122,RarityType.Petty},[0]={"Common",255,255,255,RarityType.Common},[1]={"Uncommon",0,208,0,RarityType.Uncommon},[2]={"Rare",0,112,221,RarityType.Rare},[3]={"Exceptional",255,192,64,RarityType.Exceptional},[4]={"Exotic",255,64,16,RarityType.Exotic},[5]={"Legendary",122,0,204,RarityType.Legendary}}
 local b={}
 local c={}
@@ -125,9 +127,8 @@ function onClickAutoResearch()
 	
 	if G==0 then displayChatMessage("You did not select any Rarity types to research!"%_t,Entity().title,1);autoresearch_off(); return end;
 	
-	updateInventory()
-	
 	for A=-1,5 do
+		updateInventory()
 		local H=a[A][5]
 		if c[H].checked then
 			local I=getUpgradesByRarity(H)
@@ -162,6 +163,7 @@ function onClickAutoResearch()
 		end
 	end;
 	for A=0,5 do
+		updateInventory()
 		local H=a[A][5]
 		if d[H].checked then
 			local O=getTurretsByRarity(H)
@@ -230,11 +232,9 @@ function researchFailed()
 end;
 
 function updateInventory()
+	local alliance, ship, player = getInteractingFaction(callingPlayer, AlliancePrivilege.TakeItems)
 	e={}
 	f={}
-	local player = Player()
-    local ship = player.craft
-    local alliance = player.alliance
 	if alliance and ship.factionIndex == player.allianceIndex then
 		inv = Alliance():getInventory():getItems();
         local Q=Alliance()
@@ -247,6 +247,7 @@ function updateInventory()
 		local T=S.item.itemType;
 		local U=K.rarity.value;
 		local N=S.amount;
+		local continue = false
 		if T==InventoryItemType.SystemUpgrade and c[U].checked then
 			if (U==-1 and SSPetty > 0) then table.insert(e,K) end
 			if (U==0 and SSCommon > 0) then table.insert(e,K) end
@@ -256,14 +257,13 @@ function updateInventory()
 			if (U==4 and SSExotic > 0) then table.insert(e,K) end
 			if (U==5 and SSLegendary > 0) then table.insert(e,K) end
 		elseif T==InventoryItemType.Turret or itempType==InventoryItemType.TurretTemplate and d[U].checked then
-			local continue = false
 			if (U==0 and TCommon > 0) then continue=true end
 			if (U==1 and TUncommon > 0) then continue=true end
 			if (U==2 and TRare > 0) then continue=true end
 			if (U==3 and TExceptional > 0) then continue=true end
 			if (U==4 and TExotic > 0) then continue=true end
 			if (U==5 and TLegendary > 0) then continue=true end
-			
+			-- Adding stackable items multiple times
 			if (S.item.stackable and continue) then
 				for i=0,S.amount do
 					table.insert(f,K)
