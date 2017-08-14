@@ -184,6 +184,7 @@ function secureTradingGoods()
 end
 
 function synchTradingLists(boughtGoodsIn, soldGoodsIn, intermediateGoodsIn, calledOnServer, isRequest)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     debugPrint(4,"synchTradingLists input", {boughtGoodsIn, soldGoodsIn, intermediateGoodsIn}, calledOnServer, isRequest, callingPlayer)
     if isRequest == true then
         if onServer() == true then 
@@ -192,7 +193,7 @@ function synchTradingLists(boughtGoodsIn, soldGoodsIn, intermediateGoodsIn, call
             --for _,player in pairs(sectorPlayers) do
                 --if player.index == Entity().factionIndex then
                     --broadcastInvokeClientFunction("synchTradingLists", boughtGoods, soldGoods, intermediateGoods, true)
-                    invokeClientFunction(Player(Entity().factionIndex), "synchTradingLists", boughtGoods, soldGoods, intermediateGoods, true)
+                    invokeClientFunction(manager(Entity().factionIndex), "synchTradingLists", boughtGoods, soldGoods, intermediateGoods, true)
                 --end
             --end
         else
@@ -369,8 +370,9 @@ function requestGoods()
 end
 
 function sendGoods(playerIndex)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if callingPlayer ~= playerIndex then debugPrint(0,"Wrong Player requested", nil, "expected: ", callingPlayer, "got: ", playerIndex) return end
-    local player = Player(playerIndex)
+    local player = manager(playerIndex)
     local data = {}
     data.buyPriceFactor = buyPriceFactor
     data.sellPriceFactor = sellPriceFactor
@@ -390,6 +392,7 @@ function sendGoods(playerIndex)
 end
 
 function receiveGoods(data_in)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     buyPriceFactor = data_in.buyPriceFactor
     sellPriceFactor = data_in.sellPriceFactor
     assignedCargo = data_in.assignedCargo
@@ -417,19 +420,19 @@ function receiveGoods(data_in)
     debugPrint(3, "boughtGoodsc", boughtGoods)
     for name, pair in pairs(boughtGoods) do
         local index , good = next(pair)
-        updateBoughtGoodGui(index, good, getBuyPrice(name, Player().index))
+        updateBoughtGoodGui(index, good, getBuyPrice(name, manager().index))
     end
     debugPrint(3, "soldGoodsc", soldGoods)
 
     for name, pair in pairs(soldGoods) do
         local index , good = next(pair)
-        updateSoldGoodGui(index, good, getSellPrice(name, Player().index))
+        updateSoldGoodGui(index, good, getSellPrice(name, manager().index))
     end
     debugPrint(3,"intermediateGoodsc", intermediateGoods)
 end
 
 function updateBoughtGoodGui(index, good, price)
-
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if not guiInitialized then return end
 
     local maxAmount = getMaxStock(good.name)
@@ -452,7 +455,7 @@ function updateBoughtGoodGui(index, good, price)
     line.goodName = good.name
     
     local ownCargo = 0
-    local ship = Entity(Player().craftIndex)
+    local ship = Entity(manager().craftIndex)
     if ship then
         ownCargo = ship:getCargoAmount(good) or 0
     end
@@ -463,6 +466,7 @@ function updateBoughtGoodGui(index, good, price)
 end
 
 function updateSoldGoodGui(index, good, price)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     debugPrint(3, "sold Goods", nil, tostring(guiInitialized))
     if not guiInitialized then return end
 
@@ -490,7 +494,7 @@ function updateSoldGoodGui(index, good, price)
     --local line = soldLines[i]
 
     local ownCargo = 0
-    local ship = Entity(Player().craftIndex)
+    local ship = Entity(manager().craftIndex)
     if ship then
         ownCargo = math.floor((ship.freeCargoSpace or 0) / good.size)
     end
@@ -671,6 +675,7 @@ function genericLine(pScrollFrameBought, pScrollFrameSold, index, goodName)
 end
 
 function onBuyTextEntered(textBox)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     local enteredNumber = tonumber(textBox.text)
     if enteredNumber == nil then
         enteredNumber = 0
@@ -704,7 +709,7 @@ function onBuyTextEntered(textBox)
         newNumber = stock
     end
 
-    local ship = Player().craft
+    local ship = manager().craft
     if ship.freeCargoSpace == nil then return end --> no cargo bay
 
     -- make sure the player does not buy more than he can have in his cargo bay
@@ -721,9 +726,9 @@ function onBuyTextEntered(textBox)
     end
 
     -- make sure the player does not buy more than he can afford (if this isn't his station)
-    if Faction().index ~= Player().index then
-        local maxAffordable = math.floor(Player().money / getSellPrice(good.name, Player().index))
-        if Player().infiniteResources then maxAffordable = math.huge end
+    if Faction().index ~= manager().index then
+        local maxAffordable = math.floor(manager().money / getSellPrice(good.name, manager().index))
+        if manager().infiniteResources then maxAffordable = math.huge end
 
         if maxAffordable < newNumber then
             newNumber = maxAffordable
@@ -746,7 +751,7 @@ function onBuyTextEntered(textBox)
 end
 
 function onSellTextEntered(textBox)
-
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     local enteredNumber = tonumber(textBox.text)
     if enteredNumber == nil then
         enteredNumber = 0
@@ -783,7 +788,7 @@ function onSellTextEntered(textBox)
     end
 
 
-    local ship = Player().craft
+    local ship = manager().craft
 
     local msg
 
@@ -809,8 +814,8 @@ function onSellTextEntered(textBox)
 end
 
 function onBuyButtonPressed(button)
-
-    local shipIndex = Player().craftIndex
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
+    local shipIndex = manager().craftIndex
     
     local goodIndex = nil
     for i, line in ipairs(soldLines) do
@@ -844,8 +849,8 @@ function onBuyButtonPressed(button)
 end
 
 function onSellButtonPressed(button)
-
-    local shipIndex = Player().craftIndex
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
+    local shipIndex = manager().craftIndex
 
     local goodIndex = nil
     for i, line in ipairs(boughtLines) do

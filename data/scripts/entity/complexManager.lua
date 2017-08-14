@@ -12,9 +12,11 @@ require("stringutility")
 require("constructionTab")
 require("overviewTab")
 require("tradingTab")
---require("complexFactory")
 Dialog = require("dialogutility")
 
+-- Don't remove or alter the following comment, it tells the game the namespace this script lives in. If you remove it, the script will break.
+-- namespace ComplexManager
+ComplexManager = {}
 
 VERSION = "[0.87] "
 MOD = "[CPX3]"
@@ -51,9 +53,10 @@ function debugPrint(debuglvl, msg, tableToPrint, ...)
     end
 end
 
-function initialize()
+function ComplexManager.initialize()
     local station = Entity()
-    if Player().index ~= station.factionIndex then
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
+    if manager().index ~= station.factionIndex then
         debugPrint(0," wrong player called")
     end
     if onClient() then
@@ -65,23 +68,23 @@ function initialize()
 
 end
 
-function getIcon()
+function ComplexManager.getIcon()
     return "data/textures/icons/blockstats.png"
 end
 
 
 -- if this function returns false, the script will not be listed in the interaction window,
 -- even though its UI may be registered
-function interactionPossible(playerIndex, option)
-    if Player().index ~= Entity().factionIndex then
-        debugPrint(0, " wrong player called")
-        return false
+-- Daemon - Changing to vanilla game check for consistency
+function ComplexManager.interactionPossible(playerIndex, option)
+    if checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations) then
+        return true, ""
     end
-    return true
+    return false
 end
 
 -- create all required UI elements for the client side
-function initUI()
+function ComplexManager.initUI()
     
     local res = getResolution()*0.9
     local size = vec2(1100, 800)
@@ -111,12 +114,12 @@ function initUI()
 end
 
 -- this function gets called every time the window is shown on the client, ie. when a player presses F
-function onShowWindow()
+function ComplexManager.onShowWindow()
     invokeServerFunction("removeMissingFactories")
     updateStationCombo()
 end
 
-function renderUI()
+function ComplexManager.renderUI()
     if selectedTab == 1 then
         cTRenderUI()
     end
@@ -128,11 +131,11 @@ function renderUI()
     end
 end
 
-function getUpdateInterval()
+function ComplexManager.getUpdateInterval()
     return 0.05
 end
 
-function update(timeStep)                                               --checking if selection in the List has changed
+function ComplexManager.update(timeStep)                                               --checking if selection in the List has changed
     if onClient() then
         updateOT(timeStep)
         updateTT(timeStep)
@@ -150,7 +153,7 @@ function update(timeStep)                                               --checki
     end
 end
 
-function onSelectedFunction(tabIndex)
+function ComplexManager.onSelectedFunction(tabIndex)
     local tabname = TabbedWindow(tabIndex):getActiveTab().name
      if tabname == "BCU" then
         selectedTab = 1
@@ -165,13 +168,14 @@ function onSelectedFunction(tabIndex)
      end
 end
 
-function cmOnConstructionButtonPress(constructionData, addedPlan, addedComplexData, basefab)
+function ComplexManager.cmOnConstructionButtonPress(constructionData, addedPlan, addedComplexData, basefab)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if basefab ~= nil then
         indexedComplexData[1] = basefab
     end
     
     indexedComplexData[#indexedComplexData + 1] = addedComplexData
-    invokeServerFunction("startConstruction", constructionData, addedPlan, indexedComplexData, Player().index)
+    invokeServerFunction("startConstruction", constructionData, addedPlan, indexedComplexData, manager().index)
     debugPrint(3, "pre Fab added", indexedComplexData)
 end
 
@@ -180,7 +184,8 @@ end
 -- ######################################################################################################### --
 
 -- First synchronise the data, then update the corresponding Classes
-function synchSingleComplexdata(priority, data, calledOnServer)
+function ComplexManager.synchSingleComplexdata(priority, data, calledOnServer)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if priority == nil then debugPrint(3, "synchSingleComplexdata nil found") return end
     if data == nil then debugPrint(3, "Synch single data nil") end
     --vec3 is userdata and gets converted to a Table, when transmitted. This turns tables back to vec3.
@@ -195,25 +200,26 @@ function synchSingleComplexdata(priority, data, calledOnServer)
     
     if onServer() == true then
         if calledOnServer == nil then
-            invokeClientFunction(Player(), "synchSingleComplexdata", priority, data, true)
+            invokeClientFunction(manager(), "synchSingleComplexdata", priority, data, true)
         end
-        updateSingleComplexdata(priority, data)
+        ComplexManager.updateSingleComplexdata(priority, data)
     else
         if calledOnServer == nil then
             invokeServerFunction("synchSingleComplexdata", priority, data, false)
         end
-        updateSingleComplexdata(priority, data)
+        ComplexManager.updateSingleComplexdata(priority, data)
     end
 end
 --requests allow for simple sending without changing data
-function synchComplexdata(pIndexedComplexData, calledOnServer, isrequest)
+function ComplexManager.synchComplexdata(pIndexedComplexData, calledOnServer, isrequest)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if onServer() then
         debugPrint(3, "synchronising", indexedComplexData, Entity().index)
     end
     if isrequest == true then
         if onServer() then
             if callingPlayer ~= nil then 
-                invokeClientFunction(Player(callingPlayer), "synchComplexdata", indexedComplexData, true) 
+                invokeClientFunction(manager(callingPlayer), "synchComplexdata", indexedComplexData, true) 
                 return
             else
                 --broadcastInvokeClientFunction("synchComplexdata", indexedComplexData, true) 
@@ -242,7 +248,7 @@ function synchComplexdata(pIndexedComplexData, calledOnServer, isrequest)
     
     if onServer() == true then
         if calledOnServer == nil then
-            invokeClientFunction(Player(), "synchComplexdata", pIndexedComplexData, true)
+            invokeClientFunction(manager(), "synchComplexdata", pIndexedComplexData, true)
         end
         updateComplexdata(pIndexedComplexData)
     else
@@ -253,7 +259,7 @@ function synchComplexdata(pIndexedComplexData, calledOnServer, isrequest)
     end
 end
 
-function updateSingleComplexdata(priority, data)
+function ComplexManager.updateSingleComplexdata(priority, data)
     if onServer() == true then
         indexedComplexData[priority] = data
         Entity():invokeFunction(CFSCRIPT, "setComplexData", indexedComplexData)
@@ -264,7 +270,7 @@ function updateSingleComplexdata(priority, data)
     end
 end
 
-function updateComplexdata(pIndexedComplexData)
+function ComplexManager.updateComplexdata(pIndexedComplexData)
     if onServer() == true then
         indexedComplexData = pIndexedComplexData
         local status = Entity():invokeFunction(CFSCRIPT, "setComplexData", indexedComplexData)
@@ -276,7 +282,7 @@ function updateComplexdata(pIndexedComplexData)
     end
 end
 
-function passChangedTradingDataToTT(pTradingData)
+function ComplexManager.passChangedTradingDataToTT(pTradingData)
     if onServer() == true then 
         debugPrint(0, "passing TradingData to Server is not allowed!")
     else
@@ -284,7 +290,7 @@ function passChangedTradingDataToTT(pTradingData)
     end
 end
 
-function synchProductionData(pProductionData, calledOnServer)
+function ComplexManager.synchProductionData(pProductionData, calledOnServer)
     debugPrint(3,"sync of ProductionData", pProductionData)
     if onServer() == true then 
         if calledOnServer == nil then
@@ -304,7 +310,7 @@ function synchProductionData(pProductionData, calledOnServer)
     end
 end
 
-function updateProductionData(pProductionData)
+function ComplexManager.updateProductionData(pProductionData)
     if onServer() == true then 
         productionData = pProductionData -- To be able to save it on Sector-unload
     else
@@ -313,7 +319,7 @@ function updateProductionData(pProductionData)
     end
 end
 -- only bonusType == "GeneratedEnergy"
-function addStatBonus(id, bonusType, value)
+function ComplexManager.addStatBonus(id, bonusType, value)
     if onClient() then
         invokeServerFunction("addStatBonus", id, bonusType, value)
     else
@@ -323,7 +329,7 @@ function addStatBonus(id, bonusType, value)
     end
 end
 
-function removeBonus(id)
+function ComplexManager.removeBonus(id)
     if onClient() then
         invokeServerFunction("addStatBonus", id, bonusType, value)
     else
@@ -332,7 +338,7 @@ function removeBonus(id)
     end
 end
 
-function updateTradingTab()
+function ComplexManager.updateTradingTab()
     if onServer() then
         debugPrint(0, "updateTradingTab is not allowed on Server")
     else
@@ -340,7 +346,7 @@ function updateTradingTab()
     end
 end
 
-function tRN(number)
+function ComplexManager.tRN(number)
     number = tonumber(number)
     if number == nil then return 0 end
     number = math.floor(number*100)/100     --keep last 2 digit
@@ -354,24 +360,25 @@ function tRN(number)
     return formatted
 end
 
-function vec3ToTable(vec)
+function ComplexManager.vec3ToTable(vec)
     local retTable = {x = vec.x, y = vec.y, z = vec.z}
     return retTable
 end
 
-function tableToVec3(tab)
+function ComplexManager.tableToVec3(tab)
     local vec = vec3(tab.x, tab.y, tab.z)
     return vec
 end
 
-function removeMissingFactories()
+function ComplexManager.removeMissingFactories()
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     local complex = Entity():getPlan()   
     local removedSomething = false
     for index,data in pairs(indexedComplexData) do 
         local nodeID = data.factoryBlockId
         if not complex:getBlock(nodeID) then
             debugPrint(1, data.name.." has been removed from your Complex: ", nil, Entity().index)
-            Player(Entity().factionIndex):sendChatMessage( Entity().name, 2, data.name.." has been removed from your Complex: "..Entity().name)
+            manager(Entity().factionIndex):sendChatMessage( Entity().name, 2, data.name.." has been removed from your Complex: "..Entity().name)
             indexedComplexData[index] = nil
             bonusValues[nodeID] = nil
             removedSomething = true
@@ -398,7 +405,8 @@ end
 -- ######################################################################################################### --
 -- ######################################     Server Sided     ############################################# --
 -- ######################################################################################################### --
-function startConstruction(pConstructionData, connectorPipePlan, pIndexedComplexData, playerIndex)
+function ComplexManager.startConstruction(pConstructionData, connectorPipePlan, pIndexedComplexData, playerIndex)
+	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     indexedComplexData = pIndexedComplexData
     if indexedComplexData == nil or next(indexedComplexData) == nil then
         debugPrint(0, "IndexedComplexData incomplete")
@@ -406,7 +414,7 @@ function startConstruction(pConstructionData, connectorPipePlan, pIndexedComplex
     constructionData = pConstructionData
     local self = Entity()
     
-    local player = Player(playerIndex)
+    local player = manager(playerIndex)
     -- get the money required for the plan
     local requiredMoney = connectorPipePlan:getMoneyValue()
     local requiredResources = {connectorPipePlan:getResourceValue()}
@@ -469,14 +477,14 @@ function startConstruction(pConstructionData, connectorPipePlan, pIndexedComplex
     
 end
 
-function applyBoni()
+function ComplexManager.applyBoni()
     for id,value in pairs(bonusValues) do
         debugPrint(3,"applyBoni", nil, id, value)
         addStatBonus(id, "GeneratedEnergy", value)
     end
 end
 
-function restore(restoreData)
+function ComplexManager.restore(restoreData)
     debugPrint(3,"Manager ", restoreData, Entity().index)
     for index, data in pairs(restoreData.indexedComplexData) do
         data.nodeOffset = tableToVec3(data.nodeOffset)
@@ -491,10 +499,10 @@ function restore(restoreData)
     bonusValues = restoreData.bonusValues or {}
     synchComplexdata(indexedComplexData)
     synchProductionData(productionData)
-    applyBoni()
+    ComplexManager.applyBoni()
 end
 
-function secure()
+function ComplexManager.secure()
     local savedata = {}
     local pProductionData, pIndexedComplexData = {}, {}
     --Current production Data

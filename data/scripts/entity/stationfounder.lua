@@ -368,9 +368,8 @@ function StationFounder.foundSpecial(scriptableIndex)
         return
     end
 
-    print(shipVolume)
     --shipvolume is volume that you see ingame/1000
-    if shipVolume < scriptable.volume then --if the volume is less than 500k
+    if shipVolume < scriptable.volume then --if the volume is less than the volume specified in the 
         player:sendChatMessage("Station Founder"%_t, 1, "Your ship needs to have 500,000 or more volume to convert!")
         return
     end        
