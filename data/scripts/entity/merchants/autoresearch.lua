@@ -329,9 +329,9 @@ function getTurretsFromSelection(W,T,Z,_,a0)
 	return Y
 end;
 
+-- Calls normal research from server scripts, providing the items defined in onClickAutoResearch
 function startAutoResearch(a1)
     local a2 = {}
-
 	for o,K in pairs(a1) do
 		local a3=a2[K.index]or 0;
 		a3=a3+1;
