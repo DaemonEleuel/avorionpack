@@ -450,6 +450,7 @@ function research(itemIndices)
         local item = buyer:getInventory():find(index)
         local has = buyer:getInventory():amount(index)
         if not item or has < amount then
+			print("amount: " .. amount)
             player:sendChatMessage(Entity().title, 1, "You don't have enough items!"%_t)
             return
         end

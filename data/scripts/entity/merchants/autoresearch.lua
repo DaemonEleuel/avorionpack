@@ -2,6 +2,12 @@ package.path = package.path .. ";data/scripts/entity/merchants/?.lua;"
 package.path = package.path .. ";data/scripts/lib/?.lua;"
 package.path = package.path .. ";configs/?.lua;"
 
+require ("galaxy")
+require ("utility")
+require ("faction")
+require ("player")
+require ("randomext")
+require ("stringutility")
 require ("autoresearchconfig")
 
 local a={[-1]={"Petty",112,112,122,RarityType.Petty},[0]={"Common",255,255,255,RarityType.Common},[1]={"Uncommon",0,208,0,RarityType.Uncommon},[2]={"Rare",0,112,221,RarityType.Rare},[3]={"Exceptional",255,192,64,RarityType.Exceptional},[4]={"Exotic",255,64,16,RarityType.Exotic},[5]={"Legendary",122,0,204,RarityType.Legendary}}
@@ -232,7 +238,11 @@ function researchFailed()
 end;
 
 function updateInventory()
-	local alliance, ship, player = getInteractingFaction(callingPlayer, AlliancePrivilege.TakeItems)
+
+	local player = Player()
+    local ship = player.craft
+    local alliance = player.alliance
+	
 	e={}
 	f={}
 	if alliance and ship.factionIndex == player.allianceIndex then
@@ -330,18 +340,22 @@ function getTurretsFromSelection(W,T,Z,_,a0)
 end;
 
 -- Calls normal research from server scripts, providing the items defined in onClickAutoResearch
-function startAutoResearch(a1)
-    local a2 = {}
-	for o,K in pairs(a1) do
-		local a3=a2[K.index]or 0;
-		a3=a3+1;
-		a2[K.index]=a3
-	end;
-	if not checkRarities(a1)then
+function startAutoResearch(items)
+	
+	local itemIndices = {}
+	
+	for _,item in pairs(items) do
+		local amount=itemIndices[item.index] or 0
+		amount=amount+1
+		itemIndices[item.index]=amount
+	end
+	
+	if not checkRarities(items)then
 		displayChatMessage("AutoResearch: rarities too far apart!"%_t,Entity().title,1)
 		return
-	end;
-	invokeServerFunction("research",a2)
+	end
+	
+	invokeServerFunction("research",itemIndices)
 end;
 
 function moveToSelection(a1)

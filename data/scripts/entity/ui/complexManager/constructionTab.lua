@@ -413,7 +413,6 @@ function updatePlan()
 end
 
 function updateStationCombo()
-	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     local entitiesInSector = {Sector():getEntitiesByType(EntityType.Station)}
     local wantedStations = {}
     local enindex = Entity().index
@@ -421,7 +420,7 @@ function updateStationCombo()
     stationCombo:clear()
     stationComboIndexList = {}
     for _, station in pairs(entitiesInSector) do
-        if station.factionIndex == manager().index and station.index ~= enindex and station:hasScript("data/scripts/entity/merchants/factory.lua") then   
+        if station.factionIndex == Player().index and station.index ~= enindex and station:hasScript("data/scripts/entity/merchants/factory.lua") then   
             
             local status , factoryData = station:invokeFunction(FSCRIPT, "secure", nil)
             if next(factoryData.production) then
@@ -704,22 +703,20 @@ function onNameFieldEntered()
 end
 
 function onChangeName()
-	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if stationNameTextbox.text ~= nil then
         if string.len(stationNameTextbox.text) < 4 then
             print("Stationname needs to be at least 4 Characters long!")
             stationNameTextbox.text = "-"
         else
-            invokeServerFunction("changeName", stationNameTextbox.text, manager().index)
+            invokeServerFunction("changeName", stationNameTextbox.text, Player().index)
         end
     end
 end
 
 function changeName(newName, playerIndex)
-	local manager = checkEntityInteractionPermissions(Entity(), AlliancePrivilege.FoundStations)
     if onClient() then debugPrint(0,"Wrong Side in CT-change Name") return end
-    if callingPlayer ~= playerIndex then debugPrint(0, "Wrong Player tried to rename Complex:", nil, Entity().name, manager(callingPlayer).name) return end
-    manager():sendChatMessage(Entity().name, 3, "Your Complex: "..Entity().name.." has been renamed to: "..newName, Entity().name)
+    if callingPlayer ~= playerIndex then debugPrint(0, "Wrong Player tried to rename Complex:", nil, Entity().name, Player(callingPlayer).name) return end
+    Player():sendChatMessage(Entity().name, 3, "Your Complex: "..Entity().name.." has been renamed to: "..newName, Entity().name)
     Entity().name = newName
 end
 
