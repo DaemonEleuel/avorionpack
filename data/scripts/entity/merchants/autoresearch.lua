@@ -133,8 +133,9 @@ function onClickAutoResearch()
 	
 	if G==0 then displayChatMessage("You did not select any Rarity types to research!"%_t,Entity().title,1);autoresearch_off(); return end;
 	
+	updateInventory()
+	
 	for A=-1,5 do
-		updateInventory()
 		local H=a[A][5]
 		if c[H].checked then
 			local I=getUpgradesByRarity(H)
@@ -169,7 +170,6 @@ function onClickAutoResearch()
 		end
 	end;
 	for A=0,5 do
-		updateInventory()
 		local H=a[A][5]
 		if d[H].checked then
 			local O=getTurretsByRarity(H)

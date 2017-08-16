@@ -5,9 +5,9 @@
 --Petty
 SSPetty = 3;
 --Common
-SSCommon = 3;
+SSCommon = 5;
 --Uncommon
-SSUncommon = 3;
+SSUncommon = 5;
 --Rare
 SSRare = 5;
 --Exceptional
@@ -20,9 +20,9 @@ SSLegendary = 0;
 
 --Turrets
 --Common
-TCommon = 3;
+TCommon = 5;
 --Uncommon
-TUncommon = 3;
+TUncommon = 5;
 --Rare
 TRare = 5;
 --Exceptional
