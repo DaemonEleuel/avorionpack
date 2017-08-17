@@ -9,7 +9,7 @@ This is a simple collection of mods for Avorion, merged and adapted for personal
 
  - [AutoResearch Version 1.0](https://www.avorion.net/forum/index.php?topic=1728.15)
  Provides a UI to auto-research items with some configuration options (available in /configs/autoresearch.lua).
- Known limitation, it's necessary to run the research multiple times.
+ Known limitation, it's necessary to run the research multiple times and the game locks up when you run it if you have a lot of items.
  
  - [Regenerative Asteroid Fields](https://www.avorion.net/forum/index.php?topic=3055.0)
  Enables the creation of "regenerative asteroid fields" that will re-generate their asteroids based off settings contained in /configs/regenerativeAsteroidsConfig.lua
