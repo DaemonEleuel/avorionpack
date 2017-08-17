@@ -10,27 +10,22 @@ require ("randomext")
 function getNumTurrets(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = getInt(1, 4)
-	rarityx = rarity.value + 2
-	number = rarityx + randomx -- 7 max 11
-	
-    return number + 6
+	number = rarity.value + 2 -- 7
+    return number
 end
 
 function getShieldRecharge(seed, rarity)
     math.randomseed(seed)
-	
-	randomx = math.random() * 10 
-	roundx = round(randomx)
-	number = rarity.value * 8
-	number = number + roundx -- 40 max 50
+
+	number = math.random(35, 45) -- 35 max 45
 	number = number / 100
 
     return -number
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.ShieldRecharge, getShieldRecharge(seed, rarity))
 end
 
@@ -56,7 +51,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Shield Recharge Rate", rtext = "+" .. (getShieldRecharge(seed, rarity) * -100) .. "%", icon = "data/textures/icons/zebra-shield.png"}
     }
 end

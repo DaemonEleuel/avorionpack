@@ -4,7 +4,7 @@ require ("asteroidSpawningLib")
 Placer = require("placer")
 
 MOD = "[mOS]"                               -- do not change
-VERSION = "[0.91] "
+VERSION = "[0.92] "
 
 MSSN = "isMarkedToMove"   --MoveStatuSaveName, gives the movestatus false,nil for not moving. true for needs to be moved
 
@@ -12,8 +12,6 @@ asteroidsToMove = {}                        --{[id]= bool}
 
 function initialize()
      if onServer() then
-        
-        
         Server():registerCallback("onPlayerLogOff", "onPlayerLogOff")
      else
         invokeServerFunction("onPlayerLogIn", Player().index)
@@ -61,9 +59,9 @@ function getAsteroidsToMove(playerIndex)
     local retList = {}
     local numasteroids = 0
     for _, asteroid in pairs(astroList) do
-        if asteroid.factionIndex == playerIndex then
+        if asteroid.factionIndex == playerIndex or asteroid.factionIndex == Player(playerIndex).allianceIndex then
             if asteroid:getValue(MSSN) == true then
-                retList[asteroid.index] = true
+                retList[asteroid.index] = asteroid.factionIndex
                 numasteroids = numasteroids + 1
             end
         end
@@ -74,18 +72,16 @@ end
 
 function destroyAsteroids(asteroidList)
     for id,toBeDestroyed in pairs(asteroidList) do
-        if toBeDestroyed == true then
-            Sector():deleteEntityJumped(Entity(id))
-        end
+        Sector():deleteEntityJumped(Entity(id))
     end
 end
 
 function spawnAsteroidsToMove(asteroidList, playerIndex, x, y)
     local desc = createAsteroidPlan(x, y)
     local numasteroids = 0
-    for id,toBeCreated in pairs(asteroidList) do
-        if toBeCreated == true then
-            spawnClaimedAsteroid(playerIndex, x, y, desc) 
+    for id,factionIndex in pairs(asteroidList) do
+        if factionIndex then
+            spawnClaimedAsteroid(factionIndex, x, y, desc) 
             numasteroids = numasteroids + 1
         end
     end

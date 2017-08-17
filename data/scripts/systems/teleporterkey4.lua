@@ -7,23 +7,20 @@ require ("randomext")
 -- this key is sold by the travelling merchant
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(3, rarity.value - 2)
 end
 
 function getCargoHold(seed, rarity)
 	math.randomseed(seed)
-	
-	randomx = math.random() * 15
-	roundx = round(randomx)
-	number = rarity.value * 7
-	number = number + roundx  -- 35 max 50
+	number = math.random (65, 75)  -- 65 max 75
 	number = number / 100
 	
     return number
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.CargoHold, getCargoHold(seed, rarity))
 	
 end
@@ -50,7 +47,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Cargo Hold", rtext = "+" .. getCargoHold(seed, rarity) * 100 .. "%", icon = "data/textures/icons/wooden-crate.png"}
     }
 end

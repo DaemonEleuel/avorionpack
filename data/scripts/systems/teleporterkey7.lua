@@ -8,15 +8,13 @@ require ("randomext")
 -- this key is dropped by the mad scientist
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 2)
 end
 
 function getEnergyGen(seed, rarity)
     math.randomseed(seed)
-	
-	randomx = getInt(0, 10)
-	number = rarity.value * 14
-	number = number + randomx -- 70 max 80
+
+	number = math.random(70, 80) -- 70 max 80
 	number = number / 100
 
     return number
@@ -25,17 +23,15 @@ end
 function getBattRech(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = math.random() * 10 
-	roundx = round(randomx)
-	number = rarity.value * 8
-	number = number + roundx -- 40 max 50
+	number = math.random(40, 50) -- 40 max 50
 	number = number / 100
 
     return number
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.GeneratedEnergy, getEnergyGen(seed, rarity))
 	addBaseMultiplier(StatsBonuses.BatteryRecharge, getBattRech(seed, rarity))
 end
@@ -62,7 +58,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Generated Energy", rtext = "+" .. (getEnergyGen(seed, rarity) * 100) .. "%", icon = "data/textures/icons/electric.png"},
 		{ltext = "Recharge Rate", rtext = "+" ..(getBattRech(seed, rarity) * 100) .. "%", icon = "data/textures/icons/energise.png"}
     }

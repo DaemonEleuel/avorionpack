@@ -7,15 +7,13 @@ require ("randomext")
 -- this key is dropped by the smuggler
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 1)
 end
 
 function getHyperRecharge(seed, rarity)
 
     math.randomseed(seed)
-	randomx = getInt(0, 9)
-	number = rarity.value * 8
-	number = number + randomx --40 max 49
+	number = math.random(38, 45) --35 max 38
 	number = number / 100
 	
     return -number
@@ -23,20 +21,17 @@ function getHyperRecharge(seed, rarity)
 end
 
 function getVelocity(seed, rarity)
+	
 	math.randomseed(seed)
-
-	randomx = math.random() * 15
-	roundx = round(randomx)
-	number = rarity.value * 4
-	number = number + roundx  -- 15 max 30
+	number = math.random(18,22)  -- 18 max 22
 	number = number / 100
 
     return number
 end	
 
 function onInstalled(seed, rarity)
-
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.HyperspaceCooldown, getHyperRecharge(seed, rarity))
 	addBaseMultiplier(StatsBonuses.Velocity, getVelocity(seed, rarity))
 end
@@ -63,7 +58,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Hyperspace Cooldown", rtext = (getHyperRecharge(seed, rarity) * 100) .. "%", icon = "data/textures/icons/hourglass.png"},
 		{ltext = "Velocity", rtext = "+" .. (getVelocity(seed, rarity) * 100) .. "%", icon = "data/textures/icons/lucifer-cannon.png"}
     }

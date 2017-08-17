@@ -8,17 +8,12 @@ require ("randomext")
 -- this key is dropped by Boss Swoks
 
 function getNumTurrets(seed, rarity)
-	math.randomseed(seed)
-	
-	if math.random() > 0.01 then
-    return rarity.value + (getInt(1, 2)) + 5
-	else
-	return rarity.value + 9
-	end
+	return rarity.value + 3 -- 8
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 end
 
 function onUninstalled(seed, rarity)
@@ -43,7 +38,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"}
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
     }
 end
 

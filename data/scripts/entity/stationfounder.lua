@@ -71,11 +71,6 @@ function StationFounder.initUI()
     StationFounder.buildGui({7, 8, 9}, buyTab3)
 	--Making the shop UI
     StationFounder.buildSpecialGui(buyTab4)
-    local temp = Scriptables
-    --[[for _, entry in pairs(temp) do
-        print(entry.name)
-        print(entry.price)
-    end]]
     -- warn box
     local size = vec2(550, 230)
     warnWindow = menu:createWindow(Rect(res * 0.5 - size * 0.5, res * 0.5 + size * 0.5))
@@ -347,7 +342,7 @@ function StationFounder.foundFactory(goodName, productionIndex)
     for good, amount in pairs(ship:getCargos()) do
         station:addCargo(good, amount)
     end
-
+	-- station:addScript("data/scripts/entity/complexManager.lua")
 end
 
 --Copypasta because i wouldn't want to modify the other one too much.
@@ -373,9 +368,8 @@ function StationFounder.foundSpecial(scriptableIndex)
         return
     end
 
-    print(shipVolume)
     --shipvolume is volume that you see ingame/1000
-    if shipVolume < scriptable.volume then --if the volume is less than 500k
+    if shipVolume < scriptable.volume then --if the volume is less than the volume specified in the 
         player:sendChatMessage("Station Founder"%_t, 1, "Your ship needs to have 500,000 or more volume to convert!")
         return
     end        

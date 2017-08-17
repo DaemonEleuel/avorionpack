@@ -9,20 +9,16 @@ require ("randomext")
 function getNumTurrets(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = getInt(1, 3)
 	rarityx = rarity.value
-	number = rarityx + randomx -- 6 max 9
+	number = rarityx + 1 -- 6
 	
-    return number + 6
+    return number
 end
 
 function getShieldDurab(seed, rarity)
     math.randomseed(seed)
 	
-	randomx = math.random() * 20
-	roundx = round(randomx)
-	number = rarity.value * 14
-	number = number + roundx  -- 60 max 80
+	number = math.random(60, 80)  -- 60 max 80
 	number = number / 100
 
     return number
@@ -30,7 +26,8 @@ end
 
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addBaseMultiplier(StatsBonuses.ShieldDurability, getShieldDurab(seed, rarity))
 end
 
@@ -56,7 +53,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Shield Durability", rtext = "+" .. (getShieldDurab(seed, rarity) * 100) .. "%", icon = "data/textures/icons/health-normal.png"}
     }
 end

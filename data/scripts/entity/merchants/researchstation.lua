@@ -9,7 +9,7 @@ require ("player")
 require ("randomext")
 require ("stringutility")
 require ("autoresearch")
-require("autoresearchconfig")
+require ("autoresearchconfig")
 SellableInventoryItem = require ("sellableinventoryitem")
 TurretGenerator = require ("turretgenerator")
 local Dialog = require("dialogutility")
@@ -449,11 +449,6 @@ function research(itemIndices)
     for index, amount in pairs(itemIndices) do
         local item = buyer:getInventory():find(index)
         local has = buyer:getInventory():amount(index)
-        if not item or has < amount then
-            player:sendChatMessage(Entity().title, 1, "You don't have enough items!"%_t)
-            return
-        end
-
         for i = 1, amount do
             table.insert(items, item)
         end

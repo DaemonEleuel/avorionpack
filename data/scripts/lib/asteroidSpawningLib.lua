@@ -1,6 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 MOD = "[mOS]"                           -- do not change
-VERSION = "[0.91] " 
+VERSION = "[0.92] " 
 SectorGenerator = require("SectorGenerator")
 PlanGenerator = require ("plangenerator")
 MAXDISPERSION = 5000            --  +-50km dispersion
@@ -21,14 +21,14 @@ function createAsteroidPlan(x, y)
     return desc
 end
 --create Asteroid and claim it
-function spawnClaimedAsteroid(playerIndex, secX, secY, desc)
+function spawnClaimedAsteroid(factionIndex, secX, secY, desc)
 
     local x,y,z = math.random(-MAXDISPERSION,MAXDISPERSION),math.random(-MAXDISPERSION,MAXDISPERSION),math.random(-MAXDISPERSION,MAXDISPERSION)               
     local vec = vec3(x,y,z) 
 
     asteroid = Sector():createEntity(desc)
     asteroid:moveBy(vec)
-    asteroid.factionIndex = playerIndex
+    asteroid.factionIndex = factionIndex
     asteroid:addScript("minefounder.lua")
     asteroid:addScript("sellobject.lua")
     asteroid:addScript("moveAsteroid.lua")

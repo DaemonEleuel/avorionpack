@@ -2,6 +2,14 @@ package.path = package.path .. ";data/scripts/entity/merchants/?.lua;"
 package.path = package.path .. ";data/scripts/lib/?.lua;"
 package.path = package.path .. ";configs/?.lua;"
 
+require ("galaxy")
+require ("utility")
+require ("faction")
+require ("player")
+require ("randomext")
+require ("stringutility")
+require ("autoresearchconfig")
+
 local a={[-1]={"Petty",112,112,122,RarityType.Petty},[0]={"Common",255,255,255,RarityType.Common},[1]={"Uncommon",0,208,0,RarityType.Uncommon},[2]={"Rare",0,112,221,RarityType.Rare},[3]={"Exceptional",255,192,64,RarityType.Exceptional},[4]={"Exotic",255,64,16,RarityType.Exotic},[5]={"Legendary",122,0,204,RarityType.Legendary}}
 local b={}
 local c={}
@@ -230,11 +238,13 @@ function researchFailed()
 end;
 
 function updateInventory()
-	e={}
-	f={}
+
 	local player = Player()
     local ship = player.craft
     local alliance = player.alliance
+	
+	e={}
+	f={}
 	if alliance and ship.factionIndex == player.allianceIndex then
 		inv = Alliance():getInventory():getItems();
         local Q=Alliance()
@@ -247,10 +257,24 @@ function updateInventory()
 		local T=S.item.itemType;
 		local U=K.rarity.value;
 		local N=S.amount;
+		local continue = false
 		if T==InventoryItemType.SystemUpgrade and c[U].checked then
-			table.insert(e,K)
+			if (U==-1 and SSPetty > 0) then table.insert(e,K) end
+			if (U==0 and SSCommon > 0) then table.insert(e,K) end
+			if (U==1 and SSUncommon > 0) then table.insert(e,K) end
+			if (U==2 and SSRare > 0) then table.insert(e,K) end
+			if (U==3 and SSExceptional > 0) then table.insert(e,K) end
+			if (U==4 and SSExotic > 0) then table.insert(e,K) end
+			if (U==5 and SSLegendary > 0) then table.insert(e,K) end
 		elseif T==InventoryItemType.Turret or itempType==InventoryItemType.TurretTemplate and d[U].checked then
-			if S.item.stackable then
+			if (U==0 and TCommon > 0) then continue=true end
+			if (U==1 and TUncommon > 0) then continue=true end
+			if (U==2 and TRare > 0) then continue=true end
+			if (U==3 and TExceptional > 0) then continue=true end
+			if (U==4 and TExotic > 0) then continue=true end
+			if (U==5 and TLegendary > 0) then continue=true end
+			-- Adding stackable items multiple times
+			if (S.item.stackable and continue) then
 				for i=0,S.amount do
 					table.insert(f,K)
 				end
@@ -302,11 +326,11 @@ function getTurretsFromSelection(W,T,Z,_,a0)
 	for A=M,1,-1 do
 		--change it to use single,double,triple and quad turrets of the same type in a single research process
 		if TBarrelMerge then
-			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ and W[A].item.numWeapons==a0 then
+			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ then
 				table.insert(Y,W[A])
 			end
 		else
-			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ then
+			if W[A].item.itemType==T and W[A].item.material==Z and W[A].item.weaponPrefix==_ and W[A].item.numWeapons==a0 then
 				table.insert(Y,W[A])
 			end
 		end
@@ -315,19 +339,23 @@ function getTurretsFromSelection(W,T,Z,_,a0)
 	return Y
 end;
 
-function startAutoResearch(a1)
-    local a2 = {}
-
-	for o,K in pairs(a1) do
-		local a3=a2[K.index]or 0;
-		a3=a3+1;
-		a2[K.index]=a3
-	end;
-	if not checkRarities(a1)then
+-- Calls normal research from server scripts, providing the items defined in onClickAutoResearch
+function startAutoResearch(items)
+	
+	local itemIndices = {}
+	
+	for _,item in pairs(items) do
+		local amount=itemIndices[item.index] or 0
+		amount=amount+1
+		itemIndices[item.index]=amount
+	end
+	
+	if not checkRarities(items)then
 		displayChatMessage("AutoResearch: rarities too far apart!"%_t,Entity().title,1)
 		return
-	end;
-	invokeServerFunction("research",a2)
+	end
+	
+	invokeServerFunction("research",itemIndices)
 end;
 
 function moveToSelection(a1)

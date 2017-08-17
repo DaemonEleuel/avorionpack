@@ -23,10 +23,7 @@ function CheckShipDocked(faction, ship, object, errors, generic)
 
     local error
     if object:hasComponent(ComponentType.DockingPositions) then
-	-- Changes have been done here. If you have questions ask NexusNull on Avorion Discord
-	-- Old code 
-	-- if not object:isDocked(ship)then        
-	if object:getNearestDistance(ship) > 100 and not object:isDocked(ship)then
+        if not object:isDocked(ship) then
             error = errors[object.type] or generic or "You must be docked to the object for this."%_T
         end
     else

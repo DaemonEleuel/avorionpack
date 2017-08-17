@@ -7,7 +7,7 @@ require ("randomext")
 -- this key is researched at the research station
 
 function getNumTurrets(seed, rarity)
-    return math.max(1, rarity.value + 6)
+    return math.max(1, rarity.value + 1)
 end
 
 function getRadarReach(seed, rarity)
@@ -42,7 +42,8 @@ function getScannerReach(seed, rarity)
 end
 
 function onInstalled(seed, rarity)
-    addMultiplyableBias(StatsBonuses.ArbitraryTurrets, getNumTurrets(seed, rarity))
+    addMultiplyableBias(StatsBonuses.ArmedTurrets, getNumTurrets(seed, rarity))
+	addMultiplyableBias(StatsBonuses.UnarmedTurrets, getNumTurrets(seed, rarity))
 	addMultiplyableBias(StatsBonuses.RadarReach, getRadarReach(seed, rarity))
     addMultiplyableBias(StatsBonuses.HiddenSectorRadarReach, getHiddenSecRadReach(seed, rarity))
 	addBaseMultiplier(StatsBonuses.ScannerReach, getScannerReach(seed, rarity))
@@ -70,7 +71,8 @@ end
 function getTooltipLines(seed, rarity)
     return
     {
-        {ltext = "All Turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+        {ltext = "Armed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
+		{ltext = "Unarmed turrets", rtext = "+" .. getNumTurrets(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Radar Range", rtext = "+" .. getRadarReach(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Deep Scan Range", rtext = "+" .. getHiddenSecRadReach(seed, rarity), icon = "data/textures/icons/turret.png"},
 		{ltext = "Scanner Range", rtext = "+" .. (getScannerReach(seed, rarity) * 100) .. "%", icon = "data/textures/icons/electric.png"}
