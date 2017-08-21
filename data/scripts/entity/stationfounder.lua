@@ -342,7 +342,7 @@ function StationFounder.foundFactory(goodName, productionIndex)
     for good, amount in pairs(ship:getCargos()) do
         station:addCargo(good, amount)
     end
-	-- station:addScript("data/scripts/entity/complexManager.lua")
+	 station:addScript("data/scripts/entity/complexManager.lua")
 end
 
 --Copypasta because i wouldn't want to modify the other one too much.
