@@ -1,6 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/server/?.lua"
-OOSPVERSION = "[0.9_8p]"  
+OOSPVERSION = "[0.9_9]"  
 function execute(sender, commandName, timeAmount, ...)
     if not timeAmount then
         Player(sender):sendChatMessage("Server", 2, "No arguments given.")

@@ -12,7 +12,7 @@ DEBUGLEVEL = 2
 
                                             -- do not change below
 MOD = "[OOSP]"                                
-VERSION = "[0.9_8p] "
+VERSION = "[0.9_9] "
 local timeString = "online_time"
 
 --SectorGenerator = require("SectorGenerator")--remove
@@ -254,6 +254,7 @@ function calculateOOSProductionForStations(sector,timestamp)
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     local countS, countF = 0, 0
     for _, station in pairs(stations) do
+        debugPrint(0,"============="..station.name)
         local t = Timer()
         t:start()
         countS = countS + 1
@@ -264,16 +265,16 @@ function calculateOOSProductionForStations(sector,timestamp)
                 calculateOOSProductionForFactory(station, timestamp)
             end
         end
-        if (station:hasScript("scripts/entity/merchants/consumer.lua")) then --biotope, casino, equip.dock, habitat, militaryoutpost, repairdock, researchstation, resistance outpost, scrapyard, shipyard-trading
+        if (station:hasScript("consumer.lua")) then --biotope, casino, equip.dock, habitat, militaryoutpost, repairdock, researchstation, resistance outpost, scrapyard, shipyard-trading
             consumption(station, timestamp)
         end
-        if (station:hasScript("scripts/entity/merchants/tradingpost.lua")) then
+        if (station:hasScript("tradingpost.lua")) then
             calculateOOSProductionForTradingPost(station, timestamp)
         end
-        if (station:hasScript("scripts/entity/merchants/resourcetrader.lua")) then
+        if (station:hasScript("resourcetrader.lua")) then
             calculateOOSProductionForResourcetrader(station, timestamp)
         end
-        if (station:hasScript("scripts/entity/merchants/shipyard.lua")) then                      --shipyard-ships
+        if (station:hasScript("shipyard.lua")) then                      --shipyard-ships
             debugPrint(3, "update shipyard: "..station.name)
             calculateOOSProductionForShipyard(station,timestamp)
         end
@@ -316,7 +317,7 @@ function calculateOOSProductionForTradingPost(station, timestamp)
         return
     end
     
-    local cycles = timeDelta / 50       -- 50% Chance after 25 Seconds
+    local cycles = timeDelta / 25       -- 50% Chance after 25 Seconds
     local boughtGoods = tradingdata.boughtGoods
     
     if cycles < #boughtGoods then
@@ -325,17 +326,17 @@ function calculateOOSProductionForTradingPost(station, timestamp)
             local amount = math.floor(math.random(1, 6)+0.5)
             if good ~= nil and amount > 0 then
                 local status = station:invokeFunction("scripts/entity/merchants/tradingpost.lua", "decreaseGoods", good.name, amount)
-                debugPrint(3, "tradingpost good change (S)", nil, station.name, good.name, amount)
+                debugPrint(2, "tradingpost good change (S)", nil, station.name, good.name, -amount)
                 if status ~=0 then debugPrint(4, "Could not update tradingpost writeback ", nil, station.name, good.name, amount) end
             end
         end
         return
     end
     for _,good in pairs(boughtGoods) do
-        local amount = (math.random()+4) * cycles / #boughtGoods
+        local amount = (math.random()*2+4) * cycles / (math.max(math.min(2, good.size), 0.25) * #boughtGoods)
         if good ~= nil and amount > 0 then
             local status = station:invokeFunction("scripts/entity/merchants/tradingpost.lua", "decreaseGoods", good.name, amount)
-            debugPrint(3, "tradingpost good change", nil, station.name, good.name, amount)
+            debugPrint(2, "tradingpost good change", nil, station.name, good.name, -amount)
             if status ~=0 then debugPrint(4, "Could not update tradingpost writeback ", nil, station.name, good.name, amount) end
         end
     end
@@ -380,6 +381,7 @@ function calculateOOSProductionForResourcetrader(station, timestamp)
             break
         end
     end
+    debugPrint(2, "resources", stock)
     local status = station:invokeFunction("scripts/entity/merchants/resourcetrader.lua", "restore", stock)
     if status ~= 0 then
         debugPrint(4, "Could not update resourcetrader List ", nil, station.name, status)
@@ -403,7 +405,7 @@ function consumption(station, timestamp)
         debugPrint(0, "There was a Jump back in time! Did the server crash previously?") --more likely : the Tickhandler restarted or could not load the Ticksfile
         return
     end
-    local cyclesRequired = timeDelta / (5 * 60)         -- consumer.lua consumes every 5 minutes
+    local cyclesRequired = timeDelta / 60           -- consumer.lua consumes 5 every minute
     
     if cyclesRequired < 1 then
         debugPrint(4,"not enough cycles to update", nil, cyclesRequired)
@@ -418,17 +420,17 @@ function consumption(station, timestamp)
             local amount = math.floor(math.random(1, 5)+0.5)
             if good ~= nil and amount > 0 then
                 local status = station:invokeFunction("scripts/entity/merchants/consumer.lua", "decreaseGoods", good.name, amount)
-                debugPrint(3, "consumer good change (S)", nil, station.name, good.name, amount)
-                if status ~=0 then debugPrint(4, "Could not update consumer writeback ", nil, station.name, good.name, amount) end
+                debugPrint(2, "consumer good change (S)", nil, station.name, good.name, amount)
+                if status ~=0 then debugPrint(4, "Could not update consumer writeback ", nil, station.name, good.name, -amount) end
             end
         end
         return
     end
     for _,good in pairs(boughtGoods) do
-        local amount = (math.random()+4) * cyclesRequired / (2 * #boughtGoods)
+        local amount = (math.random()*2+4) * cyclesRequired / (math.max(math.min(2, good.size), 0.25) * #boughtGoods)
         if good ~= nil and amount > 0 then
             local status = station:invokeFunction("scripts/entity/merchants/consumer.lua", "decreaseGoods", good.name, amount)
-            debugPrint(3, "consumer good change", nil, station.name, good.name, amount)
+            debugPrint(2, "consumer good change", nil, station.name, good.name, amount)
             if status ~=0 then debugPrint(4, "Could not update consumer writeback ", nil, station.name, good.name, amount) end
         end
     end
