@@ -7,7 +7,7 @@ package.path = package.path .. ";?"
 require ("galaxy")
 require ("randomext")
 local ShipGenerator = require ("shipgenerator")
-
+local maxCOMPLEXtraders = 1
 -- Don't remove or alter the following comment, it tells the game the namespace this script lives in. If you remove it, the script will break.
 -- namespace Traders
 Traders = {}
@@ -25,11 +25,18 @@ end
 local function hasTraders(station)
     -- check if there are traders flying to this station
     local ships = {Sector():getEntitiesByType(EntityType.Ship)}
-
+    local numTraders = 0
     for _, ship in pairs(ships) do
         local ok, index = ship:invokeFunction("tradeship.lua", "getStationIndex")
         if ok == 0 and index and station.index == index then
-            return true
+            if station:hasScript("complexFactory.lua") then
+                numTraders = numTraders + 1
+                if numTraders >= maxCOMPLEXtraders then -- more complextraders
+                    return true
+                end
+            else
+                return true
+            end
         end
     end
 
@@ -111,7 +118,6 @@ function Traders.update(timeStep)
         end
 
     end
-
     -- if there is no way for trade, exit
     if #tradingPossibilities == 0 then return end
 
@@ -139,9 +145,10 @@ function Traders.update(timeStep)
     -- if the trader buys, he has no cargo, if he sells, add cargo
     if trade.tradeType == TradeType.SellToStation then
         -- selling goods to station
-
         local amount = math.max(20, math.random() * 500)
-
+        if trade.station:hasScript("complexFactory.lua") then
+            amount = math.max(20, math.random() * 5000)
+        end
         if ship then
             ship:addCargo(good, amount)
             ship:addScript("merchants/tradeship.lua", trade.station.index, trade.script)
@@ -155,6 +162,9 @@ function Traders.update(timeStep)
     elseif trade.tradeType == TradeType.BuyFromStation then
         -- buying goods from station
         local amount = math.max(20, math.random() * 500)
+        if trade.station:hasScript("complexFactory.lua") then
+            amount = math.max(20, math.random() * 5000)
+        end
 
         if ship then
             ship:addScript("merchants/tradeship.lua", trade.station.index, trade.script, trade.name, amount)
