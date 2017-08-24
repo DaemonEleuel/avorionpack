@@ -9,13 +9,13 @@ CALLDISTANCE = 1000             --10Km is 1.000 not 10.000. Who made this up ?
 
 -- do not touch
 MOD = "[mOS]"
-VERSION = "[0.92] "          
+VERSION = "[0.93] "          
 MSSN = "isMarkedToMove"   --MoveStatuSaveName, gives the movestatus false,nil for not moving. true for needs to be moved
 local window
 local payButton
 local transferToAllianceButton
 local permissions = {AlliancePrivilege.ManageStations, AlliancePrivilege.FoundStations, AlliancePrivilege.ModifyCrafts, AlliancePrivilege.SpendResources}
-
+local uiInitialized
 --is the player that tries to interact also the owner? Are we close enough? then return true.
 function interactionPossible(playerIndex, option)
     local player = Player(playerIndex)
@@ -83,11 +83,12 @@ function initUI()
         transferToAllianceButton.visible = false
     end
     
-    menu:registerWindow(window, "Move Asteroid");
+    menu:registerWindow(window, "Move Asteroid")
+    uiInitialized = true
 end
 
 function prepUI()
-    
+    if not uiInitialized then return end
     if Player().allianceIndex then
         transferToAllianceButton.active = true
         transferToAllianceButton.visible = true

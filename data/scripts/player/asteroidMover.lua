@@ -4,7 +4,7 @@ require ("asteroidSpawningLib")
 Placer = require("placer")
 
 MOD = "[mOS]"                               -- do not change
-VERSION = "[0.92] "
+VERSION = "[0.93] "
 
 MSSN = "isMarkedToMove"   --MoveStatuSaveName, gives the movestatus false,nil for not moving. true for needs to be moved
 
@@ -21,13 +21,12 @@ end
 function onPlayerLogOff(playerIndex)
     if Player(playerIndex).name ~= Player().name then            --wrong player called
         return
-    end
+    end     
     local unregisterOnSectorLeftValue = Player(playerIndex):unregisterCallback("onSectorLeft", "onSectorLeft")
     local unregisterOnSectorEnteredValue = Player(playerIndex):unregisterCallback("onSectorEntered", "onSectorEntered")
-    local unregisterOnPlayerLogOffValue = Server():unregisterCallback("onPlayerLogOff", "onPlayerLogOff")
-        
+    
     print(MOD..VERSION.."======mOS unloading Player "..Player(playerIndex).name.."======") 
-    print(MOD..VERSION.."Event unregisteration: "..tostring(unregisterOnSectorLeftValue).." | "..tostring(unregisterOnSectorEnteredValue).." | "..tostring(unregisterOnPlayerLogOffValue))
+    print(MOD..VERSION.."Event unregisteration: "..tostring(unregisterOnSectorLeftValue).." | "..tostring(unregisterOnSectorEnteredValue))
 end
 
 function onPlayerLogIn(playerIndex)
@@ -50,7 +49,7 @@ end
 
 function onSectorLeft(playerIndex, x, y)
     asteroidsToMove = getAsteroidsToMove(playerIndex)
-    printTable(asteroidsToMove)
+    --printTable(asteroidsToMove)
     destroyAsteroids(asteroidsToMove)
 end
 
@@ -66,7 +65,9 @@ function getAsteroidsToMove(playerIndex)
             end
         end
     end
-    print(MOD..VERSION.."Spawning "..numasteroids.." Asteroids")
+    if numasteroids > 0 then
+        print(MOD..VERSION.."Spawning "..numasteroids.." Asteroids")
+    end
     return retList
 end
 

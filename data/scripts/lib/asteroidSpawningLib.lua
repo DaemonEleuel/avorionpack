@@ -1,6 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 MOD = "[mOS]"                           -- do not change
-VERSION = "[0.92] " 
+VERSION = "[0.93] " 
 SectorGenerator = require("SectorGenerator")
 PlanGenerator = require ("plangenerator")
 MAXDISPERSION = 5000            --  +-50km dispersion
